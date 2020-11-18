@@ -37,5 +37,6 @@ Preprocessor.preprocessor.csv_preprocessor(threshold_4_delete_null=0.5,no_null_c
                                         Type of normalization of words needed in Textual columns
                                         
 
-
+Preprocessor.preprocessor.json_preprocessor()
+For json flattening
 
