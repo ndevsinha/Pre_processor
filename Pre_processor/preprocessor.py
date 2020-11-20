@@ -1,8 +1,8 @@
 import random
 import pandas as pd
 from nltk.corpus import stopwords
-import nltk.stem
-from Stemmer import Stemmer
+from nltk.stem import PorterStemmer as stem, WordNetLemmatizer as lemma
+#from Stemmer import Stemmer
 import nltk
 from string import punctuation
 import json
@@ -10,17 +10,23 @@ from itertools import chain, starmap
 numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
 class Preprocessor:
     #intializing the parameters with instance creation
-    def __init__(self,file,filetype=None):
+    def __init__(self,file,filetype=None,encoding=None):
         flag=0
+        #set default encoding scheme if none is provided
+        if encoding is None:
+            encoding="ISO-8859-1"
+        #file handling in case file path is provided
         if isinstance(file,str):
             if "csv" in file.split("."):
-                file1 = pd.read_csv(file, encoding="ISO-8859-1")
+                file1 = pd.read_csv(file, encoding=encoding)
                 flag=1
-            if "json" in file.split("."):
+            elif "json" in file.split("."):
                 with open(file) as f:
                     file1=json.load(f)
                 flag=1
-                    
+            else :
+                raise Exception("File should be either json or csv")
+        #file handling in case file object is provided as input            
         if filetype is None:
             if isinstance(file,pd.DataFrame):
                 filetype = "dataframe"
@@ -82,8 +88,36 @@ class Preprocessor:
                 if space_in_x>=1 or space_in_y>=1:
                     textual_columns.append(i)
         #handling missing values in numeric columns
-        for col in numeric_columns:
-            self.df[col].fillna((self.df[col].mean()), inplace=True)
+        if numeric_null_replace is None:
+            print("****************************************************")
+            for col in numeric_columns:
+                self.df[col].fillna((self.df[col].mean()), inplace=True)        
+        elif isinstance(numeric_null_replace,dict) :
+            if set(["mean","median","mode"])==set(list(numeric_null_replace.keys())):
+                for col in numeric_null_replace["mean"]:
+                    if col in list(df.columns):
+                        self.df[col].fillna((self.df[col].mean()), inplace=True)
+                    else :
+                        raise Exception("provided column is not a valid column name")
+                for col in numeric_null_replace["median"]:
+                    if col in list(df.columns):
+                        self.df[col].fillna((self.df[col].median()), inplace=True)
+                    else :
+                        raise Exception("provided column is not a valid column name")
+                for col in numeric_null_replace["mode"]:
+                    if col in list(df.columns):
+                        self.df[col].fillna((self.df[col].mode()[0]), inplace=True)
+                    else :
+                        raise Exception("provided column is not a valid column name")
+            else :
+                raise Exception("Parameter numeric_null_replace  value is not valid")
+        else:
+            raise Exception("Parameter numeric_null_replace should be of type dict")
+            
+                        
+            
+                
+                
         
         #handling missing values in categorical columns
         for col in list(set(non_numeric_columns)-set(textual_columns)):
@@ -104,15 +138,13 @@ class Preprocessor:
                 if self.textual_column_word_tokenize==True:
                     self.df[col] = self.df[col].apply(nltk.word_tokenize)
                     if self.textual_column_word_normalize is not None:
-                        if self.textual_column_word_normalize=="porter":
-                            stemmer = Stemmer('porter').stemmer
-                        elif self.textual_column_word_normalize=="snowball":
-                            stemmer = Stemmer('snowball').stemmer
-                        elif self.textual_column_word_normalize=="lemmatize":
-                            stemmer = Stemmer('lemmatize').stemmer
+                        if self.textual_column_word_normalize=="stem":
+                            norm = stem().stem
+                        elif self.textual_column_word_normalize=="lemma":
+                            norm=lemma().lemmatize
                         else :
                             raise Exception("parameter textual_column_word_normalize is not valid option")
-                        self.df[col]=self.df[col].apply(lambda x: ' '.join([stemmer.stem(w,'v') for w in x]))
+                        self.df[col]=self.df[col].apply(lambda x: ' '.join([norm(w) for w in x]))
                         
         
      
