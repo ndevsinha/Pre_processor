@@ -12,7 +12,7 @@ Preprocessor is a python library for preprocessing the csv file and flattening t
 ## Documentation
 
 ##### Preprocessor Class :
->Preprocessor.preprocessor(file,filetype=None,encoding=None)
+>Pre_processor.preprocessor.Preprocessor(file,filetype=None,encoding=None)
 ###### Parameters:
     - file : str,csv,dict
             File to be preprocessed
@@ -21,7 +21,7 @@ Preprocessor is a python library for preprocessing the csv file and flattening t
     - encoding : str
                 encoding scheme for reading file.Default is ISO-8859-1
 ##### Methods :
->Preprocessor.preprocessor.csv_preprocessor(threshold_4_delete_null=0.5,no_null_columns=None,
+>preprocessor.df_preprocessor(threshold_4_delete_null=0.5,no_null_columns=None,
 numeric_null_replace=None,textual_column_word_tokenize=False,textual_column_word_normalize=False)
 ###### Parameters:
     - threshold_4_delete_null : float
@@ -44,14 +44,14 @@ numeric_null_replace=None,textual_column_word_tokenize=False,textual_column_word
 
 
 
->Preprocessor.preprocessor.json_preprocessing()
+>preprocessor.json_preprocessor()
 ###### parameters
     -No parameters needed
 
 ## Code Samples
 ##### csv file preprocessing using file path
 ```python
-from Pre_processor import preprocessor
-pps = preprocessor(file="example.csv")
-data = pps.csv_preprocessor(threshold_4_delete_null=0.7,textual_column_word_tokenize=True)
+from Pre_processor.preprocessor import Preprocessor as pps
+p = pps(file="example.csv")
+data = p.csv_preprocessor(threshold_4_delete_null=0.7,textual_column_word_tokenize=True)
 ```
