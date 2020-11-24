@@ -44,7 +44,7 @@ class Preprocessor:
             self.df = file
         
     
-    def df_preprocessor(self,threshold_4_delete_null=None,no_null_columns=None,numeric_null_replace=None,textual_column_word_tokenize=False,textual_column_word_normalize=False):
+    def df_preprocessor(self,threshold_4_delete_null=None,no_null_columns=None,numeric_null_replace=None,textual_column_word_tokenize=False,textual_column_word_normalize=None):
         
         self.threshold_4_delete_null = threshold_4_delete_null
         self.no_null_columns = no_null_columns
