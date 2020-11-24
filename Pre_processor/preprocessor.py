@@ -89,7 +89,6 @@ class Preprocessor:
                     textual_columns.append(i)
         #handling missing values in numeric columns
         if numeric_null_replace is None:
-            print("****************************************************")
             for col in numeric_columns:
                 self.df[col].fillna((self.df[col].mean()), inplace=True)        
         elif isinstance(numeric_null_replace,dict) :
